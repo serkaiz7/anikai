@@ -126,13 +126,23 @@ async function loadEpisodeStream(epNum) {
 
 function bypassLockAndPlay() {
     document.getElementById('video-lock-screen').classList.add('hidden');
-    const playerFrame = document.getElementById('main-player-frame');
     
-    // Refresh the component clean to clear memory buffers and bypass cache blocks
-    playerFrame.src = ""; 
-    setTimeout(() => {
-        playerFrame.src = state.currentStreamUrl;
-    }, 50);
+    // Completely purge the broken iframe container out of the layout structure
+    const playerFrame = document.getElementById('main-player-frame');
+    if (playerFrame) playerFrame.remove();
+    
+    // Dynamically insert an interactive premium launch module inside the media container area
+    const videoWrapper = document.querySelector('.video-wrapper');
+    videoWrapper.innerHTML = `
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center; padding: 2rem; background: #0f1115; border: 2px solid #9d4edd; border-radius: 12px;">
+            <i class="fa-solid fa-circle-play" style="font-size: 4.5rem; color: #9d4edd; margin-bottom: 1rem; filter: drop-shadow(0 0 10px #9d4edd);"></i>
+            <h3 style="font-size: 1.4rem; font-weight: 600; margin-bottom: 0.5rem;">External Media Link Decoded</h3>
+            <p style="color: #94a3b8; max-width: 400px; margin-bottom: 1.5rem; font-size: 0.9rem;">The anipy-cli extractor safely bypassed player server constraints. Click below to launch your ad-free external stream stream.</p>
+            <a href="${state.currentStreamUrl}" target="_blank" rel="noopener noreferrer" class="action-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; background: #9d4edd; font-weight: 600; border-radius: 30px; box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);">
+                <i class="fa-solid fa-bolt"></i> Launch Video Server
+            </a>
+        </div>
+    `;
 }
 
 function unlockCurrentEpisode() {
