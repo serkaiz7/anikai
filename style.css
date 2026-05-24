@@ -1,0 +1,332 @@
+/* Core Custom Properties matching animekai.to aesthetic */
+:root {
+    --bg-main: #0b0c10;
+    --bg-surface: #1f2833;
+    --bg-card: #151a22;
+    --accent: #8c52ff;
+    --accent-hover: #703be3;
+    --text-primary: #ffffff;
+    --text-muted: #c5a1ff;
+    --gold: #f39c12;
+    --radius: 12px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+}
+
+/* Navbar layout */
+.navbar {
+    background-color: var(--bg-surface);
+    border-bottom: 2px solid rgba(140, 82, 255, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.logo span {
+    color: var(--accent);
+}
+
+.nav-links a {
+    color: #aeaeae;
+    text-decoration: none;
+    margin-right: 1.5rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.nav-links a:hover {
+    color: var(--accent);
+}
+
+.token-badge {
+    background: linear-gradient(135deg, #2c1a4d, #151a22);
+    padding: 0.5rem 1.2rem;
+    border-radius: 30px;
+    border: 1px solid var(--gold);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.token-icon {
+    color: var(--gold);
+    text-shadow: 0 0 8px rgba(243, 156, 18, 0.6);
+}
+
+/* Dynamic Grid & Sidebar Layout */
+.main-layout {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+@media (max-width: 1024px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.content-area {
+    min-width: 0;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-left: 0.75rem;
+}
+
+.section-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    height: 70%;
+    width: 4px;
+    background-color: var(--accent);
+    border-radius: 4px;
+}
+
+/* Anime Card Grid */
+.anime-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.anime-card {
+    background-color: var(--bg-card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+}
+
+.anime-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 20px rgba(140, 82, 255, 0.15);
+}
+
+.card-img-wrapper {
+    position: relative;
+    aspect-ratio: 2/3;
+    background-color: #2a2a2a;
+}
+
+.card-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.episode-badge {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+}
+
+.card-info {
+    padding: 1rem;
+}
+
+.card-info h4 {
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Custom Video Player with Gating */
+.hidden {
+    display: none !important;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: var(--transition);
+}
+
+.back-btn:hover {
+    color: var(--text-primary);
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background-color: #000;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+#main-video {
+    width: 100%;
+    height: 100%;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(11, 12, 16, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.lock-content {
+    text-align: center;
+    padding: 2rem;
+}
+
+.lock-icon {
+    font-size: 3.5rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+
+.highlight {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.action-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.action-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+.player-details {
+    margin-top: 1.5rem;
+    background-color: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+}
+
+.source-tag {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    background-color: rgba(255,255,255,0.05);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    color: #00ffcc;
+}
+
+/* Sidebar Refill & Ad box */
+.sidebar-rewards {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.reward-box, .info-card {
+    background-color: var(--bg-surface);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid rgba(140, 82, 255, 0.1);
+}
+
+.reward-desc {
+    font-size: 0.85rem;
+    color: #aeaeae;
+    margin: 0.5rem 0 1.5rem 0;
+}
+
+/* Fixed container box matching Ultimate USB style design */
+.ad-placement-box {
+    background-color: var(--bg-main);
+    border: 2px dashed rgba(140, 82, 255, 0.3);
+    border-radius: var(--radius);
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.ad-icon {
+    font-size: 2.5rem;
+    color: #4a4d53;
+    margin-bottom: 0.5rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255,255,255,0.1);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s infinite linear;
+    margin: 0 auto 1rem auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
