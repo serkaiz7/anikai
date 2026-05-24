@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anikai - Stream Your Favorite Anime</title>
     <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome for clean modern icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -17,81 +16,83 @@
             <a href="#" class="logo" onclick="showView('home')">Ani<span>kai</span></a>
             <nav class="nav-links">
                 <a href="#" onclick="showView('home')"><i class="fa-solid fa-house"></i> Home</a>
-                <a href="#"><i class="fa-solid fa-compass"></i> Browse</a>
             </nav>
-            <!-- Token Status Widget -->
             <div class="token-badge">
                 <i class="fa-solid fa-coins token-icon"></i>
-                <span id="token-count">0</span> Tokens
+                <span id="token-count">3</span> Tokens
             </div>
         </div>
     </header>
 
-    <!-- Main Layout Container -->
     <main class="main-layout">
-        
-        <!-- Left/Center Content Area -->
+        <!-- Main Content Area -->
         <section class="content-area">
             
-            <!-- Home/Grid View -->
+            <!-- Home Catalog View -->
             <div id="home-view" class="view-section">
-                <h2 class="section-title">Trending Episodes</h2>
-                <div class="anime-grid" id="anime-grid">
-                    <!-- JavaScript will dynamically inject cards here -->
-                </div>
+                <h2 class="section-title">anipy-cli Scraped Database</h2>
+                <div class="anime-grid" id="anime-grid"></div>
             </div>
 
-            <!-- Streaming Player View -->
+            <!-- Enhanced Streaming Player & Ep Selector View -->
             <div id="player-view" class="view-section hidden">
                 <button class="back-btn" onclick="showView('home')"><i class="fa-solid fa-arrow-left"></i> Back to Catalog</button>
+                
                 <div class="player-container">
                     <div class="video-wrapper">
-                        <!-- Lock Screen overlay for Token Gate -->
+                        <!-- Token Lock Overlay -->
                         <div id="video-lock-screen" class="video-overlay">
                             <div class="lock-content">
                                 <i class="fa-solid fa-lock lock-icon"></i>
-                                <h3>Premium Stream Locked</h3>
-                                <p>Watching this episode costs <span class="highlight">1 Token</span>.</p>
+                                <h3>Premium Video Stream Locked</h3>
+                                <p>Watching this selection costs <span class="highlight">1 Token</span>.</p>
                                 <button id="unlock-btn" class="action-btn unlock-btn">
                                     <i class="fa-solid fa-ticket"></i> Unlock with 1 Token
                                 </button>
                             </div>
                         </div>
                         
-                        <!-- Video Element (Using anipy-cli target stream logic) -->
-                        <video id="main-video" controls poster="">
+                        <!-- Fixed Player Engine -->
+                        <video id="main-video" controls>
                             <source id="video-source" src="" type="video/mp4">
-                            Your browser does not support the video tag.
                         </video>
                     </div>
+
+                    <!-- Meta Details & Dropdown Selectors -->
                     <div class="player-details">
                         <h2 id="player-title">Anime Title</h2>
-                        <p id="player-episode">Episode 1</p>
-                        <p class="source-tag"><i class="fa-solid fa-server"></i> Source: anipy-cli core</p>
+                        
+                        <div class="selector-row">
+                            <div class="dropdown-group">
+                                <label for="season-select"><i class="fa-solid fa-layer-group"></i> Season/Part</label>
+                                <select id="season-select"></select>
+                            </div>
+                        </div>
+
+                        <div class="episodes-container">
+                            <h4><i class="fa-solid fa-list-ol"></i> Select Episode</h4>
+                            <div class="episode-chips-grid" id="episode-chips"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
         </section>
 
-        <!-- Right Sidebar: Dedicated Ad & Token Zone -->
+        <!-- Right Sidebar Refill Zone -->
         <aside class="sidebar-rewards">
             <div class="reward-box">
                 <h3><i class="fa-solid fa-charging-station"></i> Token Refill Station</h3>
-                <p class="reward-desc">Out of tokens? Watch a short advertisement below to load up your wallet instantly.</p>
+                <p class="reward-desc">Watch a promotional ad below to load up your account tokens instantly.</p>
                 
-                <!-- Designated Ad Container Area -->
                 <div class="ad-placement-box" id="ad-box">
                     <div id="ad-placeholder-content">
                         <i class="fa-solid fa-rectangle-ad ad-icon"></i>
-                        <p>Ad Space Ready</p>
-                        <!-- When you receive Google AdSense/IMA script, it goes here -->
+                        <p>Ad Container Ready</p>
                     </div>
-                    
-                    <!-- Simulating ad playback progress -->
                     <div id="ad-playing-content" class="hidden">
                         <div class="spinner"></div>
-                        <p>Watching Ad... <span id="ad-timer">10</span>s</p>
+                        <p>Loading Ad Feed... <span id="ad-timer">10</span>s</p>
                     </div>
                 </div>
 
@@ -99,13 +100,7 @@
                     <i class="fa-solid fa-play"></i> Watch Ad (+2 Tokens)
                 </button>
             </div>
-            
-            <div class="info-card">
-                <h4><i class="fa-solid fa-circle-info"></i> Setup Note</h4>
-                <p>This UI is ready for your specific Google Ad scripts or programmatic integration with an <code>anipy-cli</code> API wrapper.</p>
-            </div>
         </aside>
-
     </main>
 
     <script src="app.js"></script>
