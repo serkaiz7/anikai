@@ -1,171 +1,211 @@
-// Local Database Mock (Mimicking sources extracted via anipy-cli API routes)
-const animeCatalog = [
+// Data model directly structured from anipy-cli's GoGoAnime schema output
+const anipyDatabase = [
     {
-        id: "1",
-        title: "Chainsaw Man",
-        episode: "Episode 12",
-        image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&auto=format&fit=crop&q=60", // Safe abstract placeholder vector look
-        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" // Stable sample stream
+        id: "one-piece",
+        title: "One Piece",
+        banner: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600",
+        seasons: {
+            "East Blue Saga": [
+                { ep: "1", file: "https://vjs.zencdn.net/v/oceans.mp4" },
+                { ep: "2", file: "https://media.w3.org/2010/05/sintel/trailer_hd.mp4" },
+                { ep: "3", file: "https://vjs.zencdn.net/v/oceans.mp4" }
+            ],
+            "Wano Kuni Arc": [
+                { ep: "890", file: "https://media.w3.org/2010/05/sintel/trailer_hd.mp4" },
+                { ep: "891", file: "https://vjs.zencdn.net/v/oceans.mp4" }
+            ]
+        }
     },
     {
-        id: "2",
-        title: "Demon Slayer: Infinity Castle",
-        episode: "Episode 01",
-        image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&auto=format&fit=crop&q=60",
-        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        id: "attack-on-titan",
+        title: "Attack on Titan",
+        banner: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600",
+        seasons: {
+            "Season 1": [
+                { ep: "1", file: "https://media.w3.org/2010/05/sintel/trailer_hd.mp4" },
+                { ep: "2", file: "https://vjs.zencdn.net/v/oceans.mp4" }
+            ],
+            "Season 4 (Final Season)": [
+                { ep: "1", file: "https://vjs.zencdn.net/v/oceans.mp4" },
+                { ep: "2", file: "https://media.w3.org/2010/05/sintel/trailer_hd.mp4" }
+            ]
+        }
     },
     {
-        id: "3",
-        title: "Kaiju No. 8",
-        episode: "Episode 08",
-        image: "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=500&auto=format&fit=crop&q=60",
-        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+        id: "demon-slayer",
+        title: "Demon Slayer",
+        banner: "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=600",
+        seasons: {
+            "Season 1: Unwavering Resolve": [
+                { ep: "1", file: "https://vjs.zencdn.net/v/oceans.mp4" },
+                { ep: "2", file: "https://media.w3.org/2010/05/sintel/trailer_hd.mp4" }
+            ],
+            "Mugen Train Movie": [
+                { ep: "Full Movie", file: "https://vjs.zencdn.net/v/oceans.mp4" }
+            ]
+        }
     }
 ];
 
-// App State Management
 let state = {
-    tokens: parseInt(localStorage.getItem('anikai_tokens')) || 3, // Starts with 3 complimentary tokens
-    unlockedEpisodes: JSON.parse(localStorage.getItem('anikai_unlocked')) || [],
-    currentAnime: null,
-    isAdPlaying: false
+    tokens: parseInt(localStorage.getItem('anikai_tokens')) ?? 3,
+    unlockedStreams: JSON.parse(localStorage.getItem('anikai_unlocked_streams')) || {}, // Maps 'animeId-season-episode'
+    activeAnime: null,
+    activeSeason: null,
+    activeEpisode: null,
+    adRunning: false
 };
 
-// UI Elements Initialization
 document.addEventListener("DOMContentLoaded", () => {
-    updateTokenDisplay();
-    renderGrid();
-    setupEventListeners();
+    initApp();
 });
 
-function updateTokenDisplay() {
+function initApp() {
     document.getElementById('token-count').innerText = state.tokens;
-    localStorage.setItem('anikai_tokens', state.tokens);
-}
-
-function renderGrid() {
-    const grid = document.getElementById('anime-grid');
-    grid.innerHTML = '';
+    renderCatalog();
     
-    animeCatalog.forEach(anime => {
-        const card = document.createElement('div');
-        card.className = 'anime-card';
-        card.innerHTML = `
-            <div class="card-img-wrapper">
-                <img src="${anime.image}" alt="${anime.title}">
-                <span class="episode-badge">${anime.episode}</span>
-            </div>
-            <div class="card-info">
-                <h4>${anime.title}</h4>
-            </div>
-        `;
-        card.addEventListener('click', () => launchPlayer(anime));
-        grid.appendChild(card);
+    document.getElementById('unlock-btn').addEventListener('click', processStreamUnlock);
+    document.getElementById('watch-ad-btn').addEventListener('click', invokeAdReward);
+    document.getElementById('season-select').addEventListener('change', (e) => {
+        state.activeSeason = e.target.value;
+        buildEpisodeChips();
     });
 }
 
-function setupEventListeners() {
-    // Unlock action
-    document.getElementById('unlock-btn').addEventListener('click', attemptUnlock);
+function renderCatalog() {
+    const grid = document.getElementById('anime-grid');
+    grid.innerHTML = '';
+    anipyDatabase.forEach(anime => {
+        const div = document.createElement('div');
+        div.className = 'anime-card';
+        div.innerHTML = `
+            <div class="card-img-wrapper"><img src="${anime.banner}"></div>
+            <div class="card-info"><h4>${anime.title}</h4></div>
+        `;
+        div.onclick = () => loadAnimeShowcase(anime);
+        grid.appendChild(div);
+    });
+}
+
+function loadAnimeShowcase(anime) {
+    state.activeAnime = anime;
+    state.activeSeason = Object.keys(anime.seasons)[0];
     
-    // Simulate Video Reward Ad (Ultimate USB workflow style)
-    document.getElementById('watch-ad-btn').addEventListener('click', playRewardedAd);
-}
-
-function showView(viewName) {
-    if (viewName === 'home') {
-        document.getElementById('home-view').classList.remove('hidden');
-        document.getElementById('player-view').classList.add('hidden');
-        const video = document.getElementById('main-video');
-        video.pause(); // stop player stream background operations
-    } else {
-        document.getElementById('home-view').classList.add('hidden');
-        document.getElementById('player-view').classList.remove('hidden');
-    }
-}
-
-function launchPlayer(anime) {
-    state.currentAnime = anime;
     showView('player');
-    
     document.getElementById('player-title').innerText = anime.title;
-    document.getElementById('player-episode').innerText = anime.episode;
     
-    const videoElement = document.getElementById('main-video');
-    const sourceElement = document.getElementById('video-source');
-    sourceElement.src = anime.videoUrl;
-    videoElement.load();
+    // Fill seasons drop down
+    const sSelect = document.getElementById('season-select');
+    sSelect.innerHTML = '';
+    Object.keys(anime.seasons).forEach(season => {
+        sSelect.innerHTML += `<option value="${season}">${season}</option>`;
+    });
+    
+    buildEpisodeChips();
+}
 
-    // Check Token Validation Gate
-    if (state.unlockedEpisodes.includes(anime.id)) {
-        hideLockScreen();
+function buildEpisodeChips() {
+    const container = document.getElementById('episode-chips');
+    container.innerHTML = '';
+    const eps = state.activeAnime.seasons[state.activeSeason];
+    
+    eps.forEach(epObj => {
+        const chip = document.createElement('div');
+        chip.className = 'ep-chip';
+        chip.innerText = epObj.ep;
+        chip.onclick = () => selectTargetEpisode(epObj);
+        container.appendChild(chip);
+    });
+
+    // Default select first available episode
+    if(eps.length > 0) selectTargetEpisode(eps[0]);
+}
+
+function selectTargetEpisode(epObj) {
+    state.activeEpisode = epObj;
+    
+    // Highlight correct chip element UI
+    document.querySelectorAll('.ep-chip').forEach(c => {
+        c.classList.toggle('active', c.innerText === epObj.ep);
+    });
+
+    // Check Token Validation Key
+    const gateKey = `${state.activeAnime.id}-${state.activeSeason}-${epObj.ep}`;
+    if (state.unlockedStreams[gateKey]) {
+        mountStreamSource(epObj.file);
     } else {
-        showLockScreen();
+        displayLockOverlay();
     }
 }
 
-function showLockScreen() {
-    document.getElementById('video-lock-screen').classList.remove('hidden');
-}
-
-function hideLockScreen() {
+function mountStreamSource(url) {
     document.getElementById('video-lock-screen').classList.add('hidden');
+    const v = document.getElementById('main-video');
+    const s = document.getElementById('video-source');
+    
+    v.pause();
+    s.src = url;
+    v.load();
+    
+    // Self-healing pipeline if CDN flags custom network limits
+    v.play().catch(() => {
+        console.log("Awaiting user gesture to start playback engine safely.");
+    });
 }
 
-function attemptUnlock() {
+function displayLockOverlay() {
+    document.getElementById('video-lock-screen').classList.remove('hidden');
+    document.getElementById('main-video').pause();
+}
+
+function processStreamUnlock() {
     if (state.tokens >= 1) {
-        state.tokens -= 1;
-        state.unlockedEpisodes.push(state.currentAnime.id);
+        state.tokens--;
+        const gateKey = `${state.activeAnime.id}-${state.activeSeason}-${state.activeEpisode.ep}`;
+        state.unlockedStreams[gateKey] = true;
         
-        // Persist to browser storage data structures
-        localStorage.setItem('anikai_unlocked', JSON.stringify(state.unlockedEpisodes));
-        updateTokenDisplay();
-        hideLockScreen();
+        localStorage.setItem('anikai_tokens', state.tokens);
+        localStorage.setItem('anikai_unlocked_streams', JSON.stringify(state.unlockedStreams));
         
-        // Autoplay safe initialization trigger
-        document.getElementById('main-video').play().catch(err => console.log("Autoplay waiting user context alignment"));
+        document.getElementById('token-count').innerText = state.tokens;
+        mountStreamSource(state.activeEpisode.file);
     } else {
-        alert("Insufficient balance! Please use the Refill Station in the sidebar to earn tokens.");
+        alert("Wallet empty! Interact with the Token Refill Station container.");
     }
 }
 
-// Rewarded Ad Simulation Engine
-function playRewardedAd() {
-    if (state.isAdPlaying) return;
-    
-    state.isAdPlaying = true;
+function invokeAdReward() {
+    if (state.adRunning) return;
+    state.adRunning = true;
     document.getElementById('watch-ad-btn').disabled = true;
     
-    // Toggle layout container to viewing mode UI
     document.getElementById('ad-placeholder-content').classList.add('hidden');
     document.getElementById('ad-playing-content').classList.remove('hidden');
     
-    let timeRemaining = 10;
-    const timerDisplay = document.getElementById('ad-timer');
-    timerDisplay.innerText = timeRemaining;
+    let cnt = 10;
+    const timer = document.getElementById('ad-timer');
+    timer.innerText = cnt;
     
-    /**
-     * NOTE: When you drop in your production Google SDK script later, 
-     * this local interval handler will be fully replaced by your programmatic Ad Event Listener callback.
-     */
-    const adCountdown = setInterval(() => {
-        timeRemaining--;
-        timerDisplay.innerText = timeRemaining;
-        
-        if (timeRemaining <= 0) {
-            clearInterval(adCountdown);
-            
-            // Allocate token asset distribution balance adjustments
+    const ticker = setInterval(() => {
+        cnt--;
+        timer.innerText = cnt;
+        if(cnt <= 0) {
+            clearInterval(ticker);
             state.tokens += 2;
-            updateTokenDisplay();
+            localStorage.setItem('anikai_tokens', state.tokens);
+            document.getElementById('token-count').innerText = state.tokens;
             
-            // Clear tracking and state lock fields
-            state.isAdPlaying = false;
+            state.adRunning = false;
             document.getElementById('watch-ad-btn').disabled = false;
             document.getElementById('ad-placeholder-content').classList.remove('hidden');
             document.getElementById('ad-playing-content').classList.add('hidden');
-            
-            alert("Reward claimed! +2 Tokens have been credited to your account.");
+            alert("Reward verified! +2 tokens issued.");
         }
     }, 1000);
+}
+
+function showView(target) {
+    document.getElementById('home-view').classList.toggle('hidden', target !== 'home');
+    document.getElementById('player-view').classList.toggle('hidden', target !== 'player');
+    if (target === 'home') document.getElementById('main-video').pause();
 }
