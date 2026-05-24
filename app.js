@@ -1,5 +1,5 @@
 // Replace this with your actual Render/Vercel URL after deploying the Python code
-const API_BASE = "http://localhost:5000"; 
+const API_BASE = "https://localhost:5000"; 
 
 let state = {
     tokens: parseInt(localStorage.getItem('anikai_energy')) || 3,
