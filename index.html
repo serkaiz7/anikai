@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anikai - Stream Your Favorite Anime</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome for clean modern icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="showView('home')">Ani<span>kai</span></a>
+            <nav class="nav-links">
+                <a href="#" onclick="showView('home')"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="#"><i class="fa-solid fa-compass"></i> Browse</a>
+            </nav>
+            <!-- Token Status Widget -->
+            <div class="token-badge">
+                <i class="fa-solid fa-coins token-icon"></i>
+                <span id="token-count">0</span> Tokens
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout Container -->
+    <main class="main-layout">
+        
+        <!-- Left/Center Content Area -->
+        <section class="content-area">
+            
+            <!-- Home/Grid View -->
+            <div id="home-view" class="view-section">
+                <h2 class="section-title">Trending Episodes</h2>
+                <div class="anime-grid" id="anime-grid">
+                    <!-- JavaScript will dynamically inject cards here -->
+                </div>
+            </div>
+
+            <!-- Streaming Player View -->
+            <div id="player-view" class="view-section hidden">
+                <button class="back-btn" onclick="showView('home')"><i class="fa-solid fa-arrow-left"></i> Back to Catalog</button>
+                <div class="player-container">
+                    <div class="video-wrapper">
+                        <!-- Lock Screen overlay for Token Gate -->
+                        <div id="video-lock-screen" class="video-overlay">
+                            <div class="lock-content">
+                                <i class="fa-solid fa-lock lock-icon"></i>
+                                <h3>Premium Stream Locked</h3>
+                                <p>Watching this episode costs <span class="highlight">1 Token</span>.</p>
+                                <button id="unlock-btn" class="action-btn unlock-btn">
+                                    <i class="fa-solid fa-ticket"></i> Unlock with 1 Token
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Video Element (Using anipy-cli target stream logic) -->
+                        <video id="main-video" controls poster="">
+                            <source id="video-source" src="" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="player-details">
+                        <h2 id="player-title">Anime Title</h2>
+                        <p id="player-episode">Episode 1</p>
+                        <p class="source-tag"><i class="fa-solid fa-server"></i> Source: anipy-cli core</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Sidebar: Dedicated Ad & Token Zone -->
+        <aside class="sidebar-rewards">
+            <div class="reward-box">
+                <h3><i class="fa-solid fa-charging-station"></i> Token Refill Station</h3>
+                <p class="reward-desc">Out of tokens? Watch a short advertisement below to load up your wallet instantly.</p>
+                
+                <!-- Designated Ad Container Area -->
+                <div class="ad-placement-box" id="ad-box">
+                    <div id="ad-placeholder-content">
+                        <i class="fa-solid fa-rectangle-ad ad-icon"></i>
+                        <p>Ad Space Ready</p>
+                        <!-- When you receive Google AdSense/IMA script, it goes here -->
+                    </div>
+                    
+                    <!-- Simulating ad playback progress -->
+                    <div id="ad-playing-content" class="hidden">
+                        <div class="spinner"></div>
+                        <p>Watching Ad... <span id="ad-timer">10</span>s</p>
+                    </div>
+                </div>
+
+                <button id="watch-ad-btn" class="action-btn ad-btn">
+                    <i class="fa-solid fa-play"></i> Watch Ad (+2 Tokens)
+                </button>
+            </div>
+            
+            <div class="info-card">
+                <h4><i class="fa-solid fa-circle-info"></i> Setup Note</h4>
+                <p>This UI is ready for your specific Google Ad scripts or programmatic integration with an <code>anipy-cli</code> API wrapper.</p>
+            </div>
+        </aside>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
