@@ -3,102 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anikai - Stream Your Favorite Anime</title>
+    <title>Anikai - Stream Premium Anime</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- Header Navigation -->
     <header class="navbar">
         <div class="nav-container">
-            <a href="#" class="logo" onclick="showView('home')">Ani<span>kai</span></a>
-            <nav class="nav-links">
-                <a href="#" onclick="showView('home')"><i class="fa-solid fa-house"></i> Home</a>
-            </nav>
-            <div class="token-badge">
-                <i class="fa-solid fa-coins token-icon"></i>
-                <span id="token-count">3</span> Tokens
+            <a href="#" class="logo" onclick="window.location.reload()">Ani<span>kai</span></a>
+            
+            <div class="search-bar-container">
+                <input type="text" id="search-input" placeholder="Search anime like in animekai...">
+                <button id="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+
+            <div class="right-nav">
+                <div class="token-badge">
+                    <i class="fa-solid fa-bolt token-icon"></i>
+                    <span id="token-count">3</span> Energy
+                </div>
             </div>
         </div>
     </header>
 
     <main class="main-layout">
-        <!-- Main Content Area -->
         <section class="content-area">
             
-            <!-- Home Catalog View -->
-            <div id="home-view" class="view-section">
-                <h2 class="section-title">anipy-cli Scraped Database</h2>
-                <div class="anime-grid" id="anime-grid"></div>
-            </div>
-
-            <!-- Enhanced Streaming Player & Ep Selector View -->
             <div id="player-view" class="view-section hidden">
-                <button class="back-btn" onclick="showView('home')"><i class="fa-solid fa-arrow-left"></i> Back to Catalog</button>
-                
                 <div class="player-container">
                     <div class="video-wrapper">
-                        <!-- Token Lock Overlay -->
                         <div id="video-lock-screen" class="video-overlay">
                             <div class="lock-content">
-                                <i class="fa-solid fa-lock lock-icon"></i>
-                                <h3>Premium Video Stream Locked</h3>
-                                <p>Watching this selection costs <span class="highlight">1 Token</span>.</p>
-                                <button id="unlock-btn" class="action-btn unlock-btn">
-                                    <i class="fa-solid fa-ticket"></i> Unlock with 1 Token
-                                </button>
+                                <i class="fa-solid fa-shield-halved lock-icon"></i>
+                                <h3>Unlock Premium Stream</h3>
+                                <p>This episode requires <span class="highlight">1 Energy Token</span> to buffer source.</p>
+                                <button id="unlock-btn" class="action-btn"><i class="fa-solid fa-key"></i> Unlock Stream</button>
                             </div>
                         </div>
-                        
-                        <!-- Fixed Player Engine -->
-                        <video id="main-video" controls>
-                            <source id="video-source" src="" type="video/mp4">
-                        </video>
+                        <iframe id="main-player-frame" src="" allowfullscreen></iframe>
                     </div>
-
-                    <!-- Meta Details & Dropdown Selectors -->
                     <div class="player-details">
-                        <h2 id="player-title">Anime Title</h2>
-                        
-                        <div class="selector-row">
-                            <div class="dropdown-group">
-                                <label for="season-select"><i class="fa-solid fa-layer-group"></i> Season/Part</label>
-                                <select id="season-select"></select>
-                            </div>
-                        </div>
-
-                        <div class="episodes-container">
-                            <h4><i class="fa-solid fa-list-ol"></i> Select Episode</h4>
-                            <div class="episode-chips-grid" id="episode-chips"></div>
+                        <h2 id="player-title">Anime Title Loading...</h2>
+                        <div class="episode-selection-zone">
+                            <h3>Episodes</h3>
+                            <div class="episodes-grid" id="episodes-box"></div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div id="home-view" class="view-section">
+                <h2 class="grid-heading">Discovered Titles</h2>
+                <div class="anime-grid" id="catalog-grid">
+                    </div>
             </div>
 
         </section>
 
-        <!-- Right Sidebar Refill Zone -->
-        <aside class="sidebar-rewards">
-            <div class="reward-box">
-                <h3><i class="fa-solid fa-charging-station"></i> Token Refill Station</h3>
-                <p class="reward-desc">Watch a promotional ad below to load up your account tokens instantly.</p>
+        <aside class="sidebar-zone">
+            <div class="ad-card-wrapper">
+                <h3><i class="fa-solid fa-circle-dollar-to-slot"></i> Refill Station</h3>
+                <p>Running low on streaming energy? Watch an ad banner below to collect points.</p>
                 
-                <div class="ad-placement-box" id="ad-box">
-                    <div id="ad-placeholder-content">
-                        <i class="fa-solid fa-rectangle-ad ad-icon"></i>
-                        <p>Ad Container Ready</p>
+                <div class="ad-box-display" id="ad-frame-container">
+                    <div id="ad-idle">
+                        <i class="fa-solid fa-video ad-placeholder-icon"></i>
+                        <p>Video Ad Ready</p>
                     </div>
-                    <div id="ad-playing-content" class="hidden">
-                        <div class="spinner"></div>
-                        <p>Loading Ad Feed... <span id="ad-timer">10</span>s</p>
+                    <div id="ad-active" class="hidden">
+                        <div class="loader-circle"></div>
+                        <p>Watching Advertisement... <span id="ad-countdown">10</span>s</p>
                     </div>
                 </div>
 
-                <button id="watch-ad-btn" class="action-btn ad-btn">
-                    <i class="fa-solid fa-play"></i> Watch Ad (+2 Tokens)
-                </button>
+                <button id="trigger-ad-btn" class="ad-action-button">Watch Sponsored Video (+2 Tokens)</button>
             </div>
         </aside>
     </main>
