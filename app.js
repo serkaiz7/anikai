@@ -126,7 +126,13 @@ async function loadEpisodeStream(epNum) {
 
 function bypassLockAndPlay() {
     document.getElementById('video-lock-screen').classList.add('hidden');
-    document.getElementById('main-player-frame').src = state.currentStreamUrl;
+    const playerFrame = document.getElementById('main-player-frame');
+    
+    // Refresh the component clean to clear memory buffers and bypass cache blocks
+    playerFrame.src = ""; 
+    setTimeout(() => {
+        playerFrame.src = state.currentStreamUrl;
+    }, 50);
 }
 
 function unlockCurrentEpisode() {
